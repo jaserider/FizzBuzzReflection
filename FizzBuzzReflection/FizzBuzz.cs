@@ -6,12 +6,24 @@
 
         public FizzBuzz()
         {
-            IEnumerable<Type> childRules = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).Where(t => t.GetInterfaces().Contains(typeof(IRuleInterface)));
+            IEnumerable<Type> rulesImplemented = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).Where(t => t.GetInterfaces().Contains(typeof(IRuleInterface)));
 
-            foreach (Type childtype in childRules)
+            foreach (Type ruleType in rulesImplemented)
             {
-                rules.Add((IRuleInterface)Activator.CreateInstance(childtype));
+                rules.Add((IRuleInterface?)Activator.CreateInstance(ruleType)!);
             }
+        }
+
+        public List<Tuple<string, string>> GenerateList(int number)
+        {
+            var output = new List<Tuple<string, string>>();
+
+            for (int i = 1; i <= number; i++)
+            {
+                output.Add(Tuple.Create(i.ToString(), GetStringFromNumber(i)));
+            }
+
+            return output;
         }
 
         public string GetStringFromNumber(int number)
